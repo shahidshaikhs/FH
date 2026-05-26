@@ -27,7 +27,28 @@
     {% endif %}
   >
     {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
+      <slideshow-arrows position="center">
+        <button
+          class="slideshow-control slideshow-control--previous button button-unstyled button-unstyled--transparent"
+          aria-label="Previous"
+          on:click="/previous"
+          ref="previous"
+        >
+          <span class="svg-wrapper">
+            {{ 'arrow-long-left.svg' | inline_asset_content }}
+          </span>
+        </button>
+        <button
+          class="slideshow-control slideshow-control--next button button-unstyled button-unstyled--transparent"
+          aria-label="Next"
+          on:click="/next"
+          ref="next"
+        >
+          <span class="svg-wrapper">
+            {{ 'arrow-long-right.svg' | inline_asset_content }}
+          </span>
+        </button>
+      </slideshow-arrows>
     {% endif %}
 
     <div class="announcement-bar__slides">
@@ -55,8 +76,8 @@
   .announcement-bar__slides {
     display: grid;
     grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
+    width: 100%;
+    max-width: none;
     margin-inline: auto;
   }
 
@@ -76,7 +97,12 @@
 
   .announcement-bar__slider slideshow-arrows {
     padding: 0;
+    padding-inline: 128px;
     mix-blend-mode: normal;
+
+    @media screen and (max-width: 749px) {
+      padding-inline: 16px;
+    }
   }
 
   .announcement-bar__slider slideshow-arrows .slideshow-control {
@@ -103,8 +129,8 @@
   }
 
   .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+    width: 24px;
+    height: 24px;
   }
 
   .announcement-bar__slide {
@@ -118,6 +144,14 @@
   .announcement-bar__link {
     position: absolute;
     inset: 0;
+  }
+
+  .announcement-bar__text strong {
+    text-decoration: underline;
+  }
+
+  .announcement-bar__slider .slideshow-control svg {
+    stroke: var(--color-foreground);
   }
 {% endstylesheet %}
 
