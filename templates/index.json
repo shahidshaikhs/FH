@@ -75,6 +75,22 @@
         "padding-block-end": 64
       }
     },
+    "gallery_collage_kX7mRt": {
+      "type": "gallery-collage",
+      "settings": {
+        "heading": "Protect The Places You Love",
+        "description": "<p>Fair Harbor channels the laid-back spirit of coastal living into comfortable, versatile essentials made for life in motion. What began as sustainable swimwear has grown into a full collection of year-round staples—crafted from recycled bottles and other eco-friendly fabrics.<\/p><p>Since launch, the Certified B Corp has repurposed over 37 million bottles and is now carried online and in 400+ retailers nationwide.<\/p>",
+        "image_1": "shopify://shop_images/image-2-3-desktop-gallery-collage-I20182233466948868.jpg",
+        "image_2": "shopify://shop_images/image-2-3-mobile-gallery-collage-I11431283464965752.jpg",
+        "image_3": "shopify://shop_images/image-2-3-mobile-gallery-collage-I11431283464965337.jpg",
+        "image_4": "shopify://shop_images/image-2-3-mobile-gallery-collage-I11431283464965339.jpg",
+        "image_5": "shopify://shop_images/image-2-3-mobile-gallery-collage-I11431283464965340.jpg",
+        "color_scheme": "scheme-2",
+        "section_width": "full-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "product_list_fa6P9H": {
       "type": "product-list",
       "blocks": {
@@ -272,6 +288,7 @@
   },
   "order": [
     "hero_jVaWmY",
+    "gallery_collage_kX7mRt",
     "product_list_fa6P9H"
   ]
 }
