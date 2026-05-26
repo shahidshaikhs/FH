@@ -65,7 +65,7 @@
   # theme-check-enable UniqueStaticBlockId
 
   capture actions
-    render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
+    render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section, show_wishlist: section.settings.show_wishlist, wishlist_url: section.settings.wishlist_url
   endcapture
 
   if shop.customer_accounts_enabled
@@ -1111,6 +1111,84 @@
     font-family: var(--menu-localization-font);
     font-size: var(--menu-localization-font-size);
   }
+
+  /* === Custom header overrides === */
+
+  /* Nav link gap: 24px per Figma (theme default --gap-xl is 20px) */
+  .header .menu-list {
+    --menu-horizontal-gap: 1.5rem;
+  }
+
+  /* Header actions gap: 24px desktop, 16px mobile */
+  header-actions {
+    gap: var(--gap-lg);
+
+    @media screen and (min-width: 750px) {
+      gap: 1.5rem;
+    }
+  }
+
+  /* Full-width header padding: 64px desktop, 16px mobile */
+  .section--full-width .header__columns {
+    padding-inline: var(--padding-lg);
+
+    @media screen and (min-width: 750px) {
+      padding-inline: var(--padding-6xl);
+    }
+  }
+
+  /* Desktop search bar styling — bordered bar with placeholder text */
+  @media screen and (min-width: 750px) {
+    .header__column--right .search-action {
+      margin-inline: 0;
+    }
+
+    .header__column--right .search-action .header-actions__action {
+      border: 1px solid currentColor;
+      border-radius: var(--search-border-radius, var(--style-border-radius-inputs));
+      padding: 0.5rem 0.75rem;
+      min-width: 200px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-xs);
+    }
+
+    .header__column--right .search-action .header-actions__action::before {
+      content: 'Search';
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #C8D5E4;
+      font-weight: 400;
+      flex-grow: 1;
+    }
+
+    .header__column--right .search-action .header-actions__action .hidden {
+      display: none;
+    }
+  }
+
+  /* Sale link color */
+  .menu-list__link[href*='sale'] .menu-list__link-title,
+  .menu-list__link[href*='Sale'] .menu-list__link-title {
+    color: #AF5312;
+  }
+
+  /* Hide account button on mobile */
+  @media screen and (max-width: 749px) {
+    .account-button {
+      display: none;
+    }
+  }
+
+  #header-component[data-menu-style='drawer'] .account-button {
+    display: none;
+  }
+
+  /* Cart badge accent color override for transparent header */
+  .header .cart-bubble__background {
+    background-color: #AF5312;
+  }
 {% endstylesheet %}
 
 {% unless request.design_mode %}
@@ -1541,6 +1619,22 @@
       ],
       "default": "none",
       "visible_if": "{{ section.settings.actions_display_style == 'text' }}"
+    },
+    {
+      "type": "header",
+      "content": "Wishlist"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist icon",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "wishlist_url",
+      "label": "Wishlist page",
+      "visible_if": "{{ section.settings.show_wishlist }}"
     },
     {
       "type": "header",
