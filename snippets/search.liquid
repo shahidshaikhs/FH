@@ -75,4 +75,43 @@
       margin-inline: 0;
     }
   }
+
+  /* ================================
+   * Inline search bar — desktop
+   * Matches Figma: placeholder text + magnifying glass + border-bottom
+   * ================================ */
+  @media screen and (min-width: 750px) {
+    .header__column--right .search-action {
+      margin-inline: 0;
+      padding-block-end: 6px;
+      border-bottom: 1px solid var(--color-border);
+      min-width: 160px;
+      align-items: center;
+    }
+
+    .header__column--right .search-action button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: var(--gap-sm, 8px);
+    }
+
+    /* "Search" placeholder label — uses border color as muted/placeholder shade */
+    .header__column--right .search-action button::before {
+      content: 'Search';
+      color: var(--color-border);
+      font-size: 0.875rem;
+      font-family: var(--font-body--family);
+      font-weight: var(--font-body--weight);
+      letter-spacing: 0.01em;
+      flex: 1;
+      text-align: left;
+      transition: color var(--header-content-transition-timing);
+    }
+
+    /* Position search icon flush to the right */
+    .header__column--right .search-action .svg-wrapper {
+      flex-shrink: 0;
+    }
+  }
 {% endstylesheet %}
