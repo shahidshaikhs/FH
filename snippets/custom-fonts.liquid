@@ -1,0 +1,129 @@
+{% doc %}
+  Fair Harbor Design System — Custom Font Loading & CSS Overrides
+
+  Loads ABC Arizona Flare (headings) and ABC Diatype (body/subheading) via @font-face,
+  then overrides Horizon's CSS font-family variables so all theme components pick up
+  the brand fonts automatically.
+
+  Must be rendered in layout/theme.liquid <head> AFTER theme-styles-variables and
+  color-schemes so the :root overrides win.
+
+  @example {% render 'custom-fonts' %}
+{% enddoc %}
+
+{% style %}
+  /* ============================================================
+     1. @font-face declarations
+     ============================================================ */
+
+  @font-face {
+    font-family: 'ABC Arizona Flare';
+    src: url({{ 'ABCArizonaFlare-Regular.woff2' | asset_url }}) format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'ABC Diatype';
+    src: url({{ 'ABCDiatype-Regular.woff2' | asset_url }}) format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'ABC Diatype';
+    src: url({{ 'ABCDiatype-Bold.woff2' | asset_url }}) format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ============================================================
+     2. Font-family variable overrides
+     ============================================================ */
+
+  :root {
+    --font-heading--family: 'ABC Arizona Flare', serif;
+    --font-heading--weight: 400;
+    --font-heading--style: normal;
+
+    --font-body--family: 'ABC Diatype', sans-serif;
+    --font-body--weight: 400;
+    --font-body--style: normal;
+
+    --font-subheading--family: 'ABC Diatype', sans-serif;
+    --font-subheading--weight: 700;
+    --font-subheading--style: normal;
+
+    --font-accent--family: 'ABC Arizona Flare', serif;
+    --font-accent--weight: 400;
+    --font-accent--style: normal;
+
+    /* ============================================================
+       3. Per-heading letter-spacing overrides (Figma exact values)
+       ============================================================ */
+
+    --font-h1--letter-spacing: -0.03em;
+    --font-h2--letter-spacing: -0.03em;
+    --font-h3--letter-spacing: -0.02em;
+    --font-h4--letter-spacing: -0.02em;
+
+    /* ============================================================
+       4. Accent warm color — tab active indicator, warm accents
+       ============================================================ */
+
+    --color-accent-warm: #AF5312;
+  }
+
+  /* ============================================================
+     5. Eyebrow / H6 preset — uppercase + 2px letter-spacing
+     ============================================================ */
+
+  .type-preset--h6 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ============================================================
+     6. Link styling
+     ============================================================ */
+
+  .link {
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+
+  .link:hover {
+    color: #436389;
+  }
+
+  /* ============================================================
+     7. Button disabled state
+     ============================================================ */
+
+  .button[disabled],
+  .button:disabled,
+  .button-secondary[disabled],
+  .button-secondary:disabled {
+    background-color: #F5F5F5;
+    color: #A3A3A3;
+    --button-border-color: transparent;
+    --button-background-color: #F5F5F5;
+    --button-color: #A3A3A3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     8. Focus-visible ring for buttons
+     ============================================================ */
+
+  .button:focus-visible,
+  .button-secondary:focus-visible {
+    outline: 2px solid #00165A;
+    outline-offset: 4px;
+    border-radius: 32px;
+  }
+{% endstyle %}
