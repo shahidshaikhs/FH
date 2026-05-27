@@ -87,6 +87,58 @@
       grid-column: 1 / -1;
     }
   }
+
+  /* Footer desktop layout: marketing column + 3 menu columns */
+  @media screen and (min-width: 750px) {
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      align-content: start;
+      row-gap: 24px;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(2) {
+      grid-column: 2;
+      grid-row: 1 / -1;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(3) {
+      grid-column: 3;
+      grid-row: 1 / -1;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(4) {
+      grid-column: 4;
+      grid-row: 1 / -1;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(5) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(6) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .footer-content:has(> :nth-child(7)):not(:has(> :nth-child(8))) > :nth-child(7) {
+      grid-column: 1;
+      grid-row: 4;
+    }
+  }
+
+  /* Responsive adjustments for custom liquid blocks in footer */
+  @media screen and (max-width: 749px) {
+    .footer-b-corp img {
+      width: 48px;
+      height: 80px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -135,6 +187,9 @@
     },
     {
       "type": "email-signup"
+    },
+    {
+      "type": "custom-liquid"
     }
   ],
   "enabled_on": {
