@@ -11,6 +11,7 @@
   @param {string} description - Banner description text
   @param {string} button_text - CTA button label
   @param {string} button_url - CTA button destination URL
+  @param {string} [shopify_attributes] - Block shopify_attributes for theme editor
 {% enddoc %}
 
 {% liquid
@@ -18,9 +19,10 @@
   assign description = description | default: ''
   assign button_text = button_text | default: 'View Lookbook'
   assign button_url = button_url | default: '#'
+  assign shopify_attributes = shopify_attributes | default: ''
 %}
 
-<div class="collection-midpage-banner">
+<div class="collection-midpage-banner" {{ shopify_attributes }}>
   {% if image != blank %}
     <div class="collection-midpage-banner__media">
       {{

@@ -261,6 +261,28 @@
             "price_EzJzMm",
             "swatches"
           ]
+        },
+        "in-grid-banner": {
+          "type": "_collection-in-grid-banner",
+          "static": true,
+          "settings": {
+            "position": 4,
+            "image": "shopify://shop_images/in-grid-banner-desktop-footer-2744874242.png",
+            "heading": "Shop BreezeKnit™",
+            "description": "Our sweat-wicking liner perfect for long days in the sun.",
+            "link_text": "Shop now"
+          }
+        },
+        "midpage-banner": {
+          "type": "_collection-midpage-banner",
+          "static": true,
+          "settings": {
+            "position": 8,
+            "image": "shopify://shop_images/hero-banner-desktop-footer-274976983.png",
+            "heading": "Effortless style ideas",
+            "description": "Discover our curated lookbook and find fresh ways to mix and match your favorite pieces.",
+            "button_text": "View Lookbook"
+          }
         }
       },
       "settings": {
@@ -275,18 +297,6 @@
         "columns_gap_vertical": 40,
         "padding-inline-start": 0,
         "padding-inline-end": 0,
-        "in_grid_banner_enabled": true,
-        "in_grid_banner_position": 4,
-        "in_grid_banner_image": "shopify://shop_images/in-grid-banner-desktop-footer-2744874242.png",
-        "in_grid_banner_heading": "Shop BreezeKnit™",
-        "in_grid_banner_description": "Our sweat-wicking liner perfect for long days in the sun.",
-        "in_grid_banner_link_text": "Shop now",
-        "midpage_banner_enabled": true,
-        "midpage_banner_position": 8,
-        "midpage_banner_image": "shopify://shop_images/hero-banner-desktop-footer-274976983.png",
-        "midpage_banner_heading": "Effortless style ideas",
-        "midpage_banner_description": "Discover our curated lookbook and find fresh ways to mix and match your favorite pieces.",
-        "midpage_banner_button_text": "View Lookbook",
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 32

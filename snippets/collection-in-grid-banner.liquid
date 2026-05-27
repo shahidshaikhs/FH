@@ -10,6 +10,7 @@
   @param {string} description - Banner description text
   @param {string} link_text - Link label (default: 'Shop now')
   @param {string} link_url - Link destination URL
+  @param {string} [shopify_attributes] - Block shopify_attributes for theme editor
 {% enddoc %}
 
 {% liquid
@@ -17,9 +18,10 @@
   assign description = description | default: ''
   assign link_text = link_text | default: 'Shop now'
   assign link_url = link_url | default: '#'
+  assign shopify_attributes = shopify_attributes | default: ''
 %}
 
-<div class="collection-in-grid-banner">
+<div class="collection-in-grid-banner" {{ shopify_attributes }}>
   {% if image != blank %}
     <div class="collection-in-grid-banner__media">
       {{
