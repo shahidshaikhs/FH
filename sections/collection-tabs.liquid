@@ -2,9 +2,10 @@
 <div
   class="section section--page-width color-{{ section.settings.color_scheme }}"
 >
-  <div
+  <nav
     class="collection-tabs spacing-style"
     style="{% render 'spacing-style', settings: section.settings %}"
+    aria-label="Collection categories"
   >
     <div class="collection-tabs__list">
       {% for block in section.blocks %}
@@ -29,7 +30,7 @@
         </a>
       {% endfor %}
     </div>
-  </div>
+  </nav>
 </div>
 
 {% stylesheet %}
@@ -105,7 +106,7 @@
 {% schema %}
 {
   "name": "Collection tabs",
-  "tag": "nav",
+  "tag": "section",
   "class": "collection-tabs-wrapper section-wrapper",
   "enabled_on": {
     "templates": ["collection"]
