@@ -132,7 +132,20 @@
     }
   }
 
-  /* Responsive adjustments for custom liquid blocks in footer */
+  /* Certified B Corp icon — fixed size so base img{width:100%} doesn't stretch it */
+  .footer-b-corp img {
+    width: 56px;
+    height: 88px;
+    flex-shrink: 0;
+  }
+
+  /* US flag icon — fixed size */
+  .footer-country img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
   @media screen and (max-width: 749px) {
     .footer-b-corp img {
       width: 48px;
