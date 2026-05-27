@@ -296,7 +296,9 @@
         "padding-inline-start": 0,
         "padding-inline-end": 0,
         "in_grid_banner_position": 4,
+        "in_grid_banner_columns": 1,
         "midpage_banner_position": 8,
+        "midpage_banner_columns": 4,
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 32

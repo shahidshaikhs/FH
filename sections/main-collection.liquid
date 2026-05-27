@@ -106,9 +106,23 @@
 </results-list>
 
 {% style %}
-  /* In-grid banner: fill the grid cell height */
+  /* Cap product grid at 4 columns on desktop */
+  @media screen and (min-width: 750px) {
+    .product-grid--{{ section.id }}:is(.product-grid--grid) {
+      --product-grid-columns-desktop: repeat(4, 1fr);
+    }
+  }
+
+  /* In-grid banner: column span + fill grid cell height */
   .product-grid--{{ section.id }} .product-grid__item--banner {
     list-style: none;
+    grid-column: span {{ section.settings.in_grid_banner_columns }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} .product-grid__item--banner {
+      grid-column: span 1;
+    }
   }
 
   .product-grid--{{ section.id }} .collection-in-grid-banner {
@@ -175,10 +189,16 @@
     text-decoration: underline;
   }
 
-  /* Mid-page banner: span full width of the grid */
+  /* Mid-page banner: configurable column span */
   .product-grid--{{ section.id }} .product-grid__item--midpage-banner {
-    grid-column: 1 / -1;
     list-style: none;
+    grid-column: span {{ section.settings.midpage_banner_columns }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} .product-grid__item--midpage-banner {
+      grid-column: 1 / -1;
+    }
   }
 
   .product-grid--{{ section.id }} .collection-midpage-banner {
@@ -512,10 +532,28 @@
       "default": 4
     },
     {
+      "type": "range",
+      "id": "in_grid_banner_columns",
+      "label": "In-grid banner columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1
+    },
+    {
       "type": "number",
       "id": "midpage_banner_position",
       "label": "Midpage banner position",
       "default": 8
+    },
+    {
+      "type": "range",
+      "id": "midpage_banner_columns",
+      "label": "Midpage banner columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 4
     },
     {
       "type": "header",
