@@ -48,20 +48,9 @@
 
     {% paginate collection.products by products_per_page %}
       {% capture children %}
-        {% comment %} Pre-scan blocks for banner configuration {% endcomment %}
-        {% assign has_in_grid_banner = false %}
-        {% assign in_grid_banner_position = 0 %}
-        {% assign has_midpage_banner = false %}
-        {% assign midpage_banner_position = 0 %}
-        {% for block in section.blocks %}
-          {% if block.type == '_collection-in-grid-banner' %}
-            {% assign has_in_grid_banner = true %}
-            {% assign in_grid_banner_position = block.settings.position %}
-          {% elsif block.type == '_collection-midpage-banner' %}
-            {% assign has_midpage_banner = true %}
-            {% assign midpage_banner_position = block.settings.position %}
-          {% endif %}
-        {% endfor %}
+        {% comment %} Read banner positions directly from section settings (reliable in content_for 'block' architecture) {% endcomment %}
+        {% assign in_grid_banner_position = section.settings.in_grid_banner_position | plus: 0 %}
+        {% assign midpage_banner_position = section.settings.midpage_banner_position | plus: 0 %}
 
         {% assign banner_injected = false %}
         {% assign midpage_injected = false %}
@@ -70,7 +59,7 @@
           {% assign product_counter = product_counter | plus: 1 %}
 
           {% comment %} In-grid banner injection {% endcomment %}
-          {% if has_in_grid_banner and banner_injected == false and product_counter == in_grid_banner_position %}
+          {% if in_grid_banner_position > 0 and banner_injected == false and product_counter == in_grid_banner_position %}
             <li class="product-grid__item product-grid__item--banner">
               {% content_for 'block', type: '_collection-in-grid-banner', id: 'in-grid-banner' %}
             </li>
@@ -90,7 +79,7 @@
           </li>
 
           {% comment %} Mid-page banner injection {% endcomment %}
-          {% if has_midpage_banner and midpage_injected == false and product_counter == midpage_banner_position %}
+          {% if midpage_banner_position > 0 and midpage_injected == false and product_counter == midpage_banner_position %}
             <li class="product-grid__item product-grid__item--midpage-banner">
               {% content_for 'block', type: '_collection-midpage-banner', id: 'midpage-banner' %}
             </li>
@@ -507,6 +496,26 @@
       "id": "show_load_more",
       "label": "Show load more button",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "Banners"
+    },
+    {
+      "type": "paragraph",
+      "content": "Set the grid position (product count) where each banner appears. Use 0 to hide."
+    },
+    {
+      "type": "number",
+      "id": "in_grid_banner_position",
+      "label": "In-grid banner position",
+      "default": 4
+    },
+    {
+      "type": "number",
+      "id": "midpage_banner_position",
+      "label": "Midpage banner position",
+      "default": 8
     },
     {
       "type": "header",
