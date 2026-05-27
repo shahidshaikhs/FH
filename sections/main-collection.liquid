@@ -48,7 +48,26 @@
 
     {% paginate collection.products by products_per_page %}
       {% capture children %}
+        {% assign banner_injected = false %}
+        {% assign midpage_injected = false %}
+        {% assign product_counter = 0 %}
         {% for product in collection.products %}
+          {% assign product_counter = product_counter | plus: 1 %}
+
+          {% comment %} In-grid banner injection {% endcomment %}
+          {% if section.settings.in_grid_banner_enabled and banner_injected == false and product_counter == section.settings.in_grid_banner_position %}
+            <li class="product-grid__item product-grid__item--banner">
+              {% render 'collection-in-grid-banner',
+                image: section.settings.in_grid_banner_image,
+                heading: section.settings.in_grid_banner_heading,
+                description: section.settings.in_grid_banner_description,
+                link_text: section.settings.in_grid_banner_link_text,
+                link_url: section.settings.in_grid_banner_link_url
+              %}
+            </li>
+            {% assign banner_injected = true %}
+          {% endif %}
+
           <li
             id="{{ section.id }}-{{ product.id }}"
             class="product-grid__item product-grid__item--{{ forloop.index0 }}"
@@ -60,6 +79,20 @@
             {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
             {% # theme-check-enable %}
           </li>
+
+          {% comment %} Mid-page banner injection {% endcomment %}
+          {% if section.settings.midpage_banner_enabled and midpage_injected == false and product_counter == section.settings.midpage_banner_position %}
+            <li class="product-grid__item product-grid__item--midpage-banner">
+              {% render 'collection-midpage-banner',
+                image: section.settings.midpage_banner_image,
+                heading: section.settings.midpage_banner_heading,
+                description: section.settings.midpage_banner_description,
+                button_text: section.settings.midpage_banner_button_text,
+                button_url: section.settings.midpage_banner_button_url
+              %}
+            </li>
+            {% assign midpage_injected = true %}
+          {% endif %}
         {% endfor %}
       {% endcapture %}
 
@@ -70,9 +103,254 @@
         paginate: paginate,
         enable_infinite_scroll: section.settings.enable_infinite_scroll
       %}
+
+      {% if section.settings.show_load_more and section.settings.enable_infinite_scroll == false and paginate.next %}
+        <div class="collection-load-more">
+          <a href="{{ paginate.next.url }}" class="collection-load-more__button">Load more</a>
+        </div>
+      {% endif %}
     {% endpaginate %}
   </div>
 </results-list>
+
+{% style %}
+  /* In-grid banner: fill the grid cell height */
+  .product-grid--{{ section.id }} .product-grid__item--banner {
+    list-style: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-base, 0);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__heading {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight, 400);
+    font-size: 24px;
+    line-height: 32px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__description {
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__link {
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    text-decoration: underline;
+  }
+
+  /* Mid-page banner: span full width of the grid */
+  .product-grid--{{ section.id }} .product-grid__item--midpage-banner {
+    grid-column: 1 / -1;
+    list-style: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-base, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    aspect-ratio: 1408 / 469;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 64px;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__heading {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight, 400);
+    font-size: 72px;
+    line-height: 80px;
+    letter-spacing: -2.16px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__description {
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid #C8D5E4;
+    padding: 4px 32px;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+    width: fit-content;
+    min-height: 48px;
+  }
+
+  /* Load more button */
+  .collection-load-more {
+    grid-column: var(--full-width);
+    display: flex;
+    justify-content: center;
+    padding-block-start: 16px;
+  }
+
+  .collection-load-more__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-foreground);
+    padding: 4px 32px;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+    min-height: 48px;
+    cursor: pointer;
+  }
+
+  .collection-load-more__button:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  /* Hide default pagination when load-more is active */
+  {% if section.settings.show_load_more %}
+    .product-grid-container .pagination {
+      display: none;
+    }
+  {% endif %}
+
+  /* Mobile grid gap override */
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} {
+      --product-grid-gap-mobile: 24px 8px;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner {
+      aspect-ratio: 1 / 1;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__overlay {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__content {
+      padding: 24px;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__heading {
+      font-size: 40px;
+      line-height: 48px;
+      letter-spacing: 0;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__heading {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__description {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__content {
+      padding: 16px;
+      gap: 4px;
+    }
+  }
+{% endstyle %}
 
 {% schema %}
 {
@@ -220,6 +498,112 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_load_more",
+      "label": "Show load more button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Promotional Banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "in_grid_banner_enabled",
+      "label": "Enable in-grid banner",
+      "default": false
+    },
+    {
+      "type": "number",
+      "id": "in_grid_banner_position",
+      "label": "Banner position",
+      "default": 4,
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "in_grid_banner_image",
+      "label": "Banner image",
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "text",
+      "id": "in_grid_banner_heading",
+      "label": "Banner heading",
+      "default": "Shop BreezeKnit™",
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "textarea",
+      "id": "in_grid_banner_description",
+      "label": "Banner description",
+      "default": "Our sweat-wicking liner perfect for long days in the sun.",
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "text",
+      "id": "in_grid_banner_link_text",
+      "label": "Banner link text",
+      "default": "Shop now",
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "url",
+      "id": "in_grid_banner_link_url",
+      "label": "Banner link URL",
+      "visible_if": "{{ section.settings.in_grid_banner_enabled }}"
+    },
+    {
+      "type": "header",
+      "content": "Lookbook Banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "midpage_banner_enabled",
+      "label": "Enable lookbook banner",
+      "default": false
+    },
+    {
+      "type": "number",
+      "id": "midpage_banner_position",
+      "label": "Banner position",
+      "default": 8,
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "midpage_banner_image",
+      "label": "Banner image",
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
+    },
+    {
+      "type": "text",
+      "id": "midpage_banner_heading",
+      "label": "Banner heading",
+      "default": "Effortless style ideas",
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
+    },
+    {
+      "type": "textarea",
+      "id": "midpage_banner_description",
+      "label": "Banner description",
+      "default": "Discover our curated lookbook and find fresh ways to mix and match your favorite pieces.",
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
+    },
+    {
+      "type": "text",
+      "id": "midpage_banner_button_text",
+      "label": "Button text",
+      "default": "View Lookbook",
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
+    },
+    {
+      "type": "url",
+      "id": "midpage_banner_button_url",
+      "label": "Button link",
+      "visible_if": "{{ section.settings.midpage_banner_enabled }}"
     },
     {
       "type": "header",

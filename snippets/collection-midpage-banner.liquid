@@ -1,0 +1,54 @@
+{% doc %}
+  Mid-Page Lookbook/Hero Banner
+
+  Renders a full-width banner spanning the entire product grid.
+  Displays a background image with gradient overlay, heading,
+  description, and pill-shaped CTA button. Content is left-aligned
+  at the bottom on desktop.
+
+  @param {object} image - Shopify image object
+  @param {string} heading - Banner heading text
+  @param {string} description - Banner description text
+  @param {string} button_text - CTA button label
+  @param {string} button_url - CTA button destination URL
+{% enddoc %}
+
+{% liquid
+  assign heading = heading | default: ''
+  assign description = description | default: ''
+  assign button_text = button_text | default: 'View Lookbook'
+  assign button_url = button_url | default: '#'
+%}
+
+<div class="collection-midpage-banner">
+  {% if image != blank %}
+    <div class="collection-midpage-banner__media">
+      {{
+        image
+        | image_url: width: image.width
+        | image_tag:
+          sizes: '(min-width: 750px) 1408px, 100vw',
+          widths: '375,750,1100,1408,1780',
+          loading: 'lazy',
+          class: 'collection-midpage-banner__image',
+          alt: heading
+      }}
+    </div>
+  {% endif %}
+  <div class="collection-midpage-banner__overlay"></div>
+  <div class="collection-midpage-banner__content">
+    <div class="collection-midpage-banner__text">
+      {% if heading != blank %}
+        <h2 class="collection-midpage-banner__heading">{{ heading | escape }}</h2>
+      {% endif %}
+      {% if description != blank %}
+        <p class="collection-midpage-banner__description">{{ description | escape }}</p>
+      {% endif %}
+    </div>
+    {% if button_text != blank %}
+      <div class="collection-midpage-banner__links">
+        <a href="{{ button_url }}" class="collection-midpage-banner__button">{{ button_text | escape }}</a>
+      </div>
+    {% endif %}
+  </div>
+</div>

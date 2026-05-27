@@ -1,0 +1,200 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--page-width color-{{ section.settings.color_scheme }}"
+>
+  <div
+    class="collection-tabs spacing-style"
+    style="{% render 'spacing-style', settings: section.settings %}"
+  >
+    <div class="collection-tabs__list">
+      {% for block in section.blocks %}
+        {% liquid
+          assign is_active = false
+          assign block_url = block.settings.url | default: ''
+          if block_url != blank
+            assign block_path = block_url | split: '?' | first
+            assign current_path = request.path
+            if block_path == current_path
+              assign is_active = true
+            endif
+          endif
+        %}
+        <a
+          href="{{ block.settings.url | default: '#' }}"
+          class="collection-tabs__tab{% if is_active %} collection-tabs__tab--active{% endif %}"
+          {% if is_active %}aria-current="page"{% endif %}
+          {{ block.shopify_attributes }}
+        >
+          {{ block.settings.label | escape }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .collection-tabs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .collection-tabs__list {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .collection-tabs__tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    /* Desktop sizes */
+    height: 40px;
+    padding: 8px 16px;
+    font-size: 16px;
+    line-height: 24px;
+
+    /* Inactive state */
+    background-color: #FCFBFA;
+    border: 1px solid #F4F0ED;
+    color: #000000;
+
+    &:hover {
+      background-color: #F4F0ED;
+    }
+  }
+
+  .collection-tabs__tab--active {
+    background-color: #C8D5E4;
+    border-color: #436389;
+
+    &:hover {
+      background-color: #C8D5E4;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .collection-tabs__list {
+      gap: 8px;
+    }
+
+    .collection-tabs__tab {
+      height: 32px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection tabs",
+  "tag": "nav",
+  "class": "collection-tabs-wrapper section-wrapper",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Tab"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection tabs",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Shop all"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Swim"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Tops"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Bottoms"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

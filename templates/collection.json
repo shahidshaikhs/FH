@@ -21,8 +21,8 @@
             "max_width": "normal",
             "alignment": "left",
             "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
+            "font": "var(--font-heading--family)",
+            "font_size": "clamp(1.5rem, 5vw, 2.5rem)",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -48,7 +48,7 @@
             "alignment": "left",
             "type_preset": "rte",
             "font": "var(--font-primary--family)",
-            "font_size": "",
+            "font_size": "clamp(0.875rem, 2vw, 1rem)",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -78,7 +78,7 @@
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
+        "gap": 8,
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
@@ -94,8 +94,48 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-start": 40,
+        "padding-block-end": 0
+      }
+    },
+    "tabs": {
+      "type": "collection-tabs",
+      "blocks": {
+        "tab_shop_all": {
+          "type": "tab",
+          "settings": {
+            "label": "Shop all"
+          }
+        },
+        "tab_swim": {
+          "type": "tab",
+          "settings": {
+            "label": "Swim"
+          }
+        },
+        "tab_tops": {
+          "type": "tab",
+          "settings": {
+            "label": "Tops"
+          }
+        },
+        "tab_bottoms": {
+          "type": "tab",
+          "settings": {
+            "label": "Bottoms"
+          }
+        }
+      },
+      "block_order": [
+        "tab_shop_all",
+        "tab_swim",
+        "tab_tops",
+        "tab_bottoms"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 32
       }
     },
     "main": {
@@ -227,20 +267,46 @@
         "layout_type": "grid",
         "product_card_size": "medium",
         "mobile_product_card_size": "small",
+        "enable_infinite_scroll": false,
+        "show_load_more": true,
         "product_grid_width": "centered",
         "full_width_on_mobile": true,
         "columns_gap_horizontal": 16,
-        "columns_gap_vertical": 24,
+        "columns_gap_vertical": 40,
         "padding-inline-start": 0,
         "padding-inline-end": 0,
+        "in_grid_banner_enabled": true,
+        "in_grid_banner_position": 4,
+        "in_grid_banner_image": "shopify://shop_images/in-grid-banner-desktop-footer-2744874242.png",
+        "in_grid_banner_heading": "Shop BreezeKnit™",
+        "in_grid_banner_description": "Our sweat-wicking liner perfect for long days in the sun.",
+        "in_grid_banner_link_text": "Shop now",
+        "midpage_banner_enabled": true,
+        "midpage_banner_position": 8,
+        "midpage_banner_image": "shopify://shop_images/hero-banner-desktop-footer-274976983.png",
+        "midpage_banner_heading": "Effortless style ideas",
+        "midpage_banner_description": "Discover our curated lookbook and find fresh ways to mix and match your favorite pieces.",
+        "midpage_banner_button_text": "View Lookbook",
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 32
+      }
+    },
+    "seo-text": {
+      "type": "collection-seo-text",
+      "settings": {
+        "heading_text": "Men's Clothing",
+        "description": "Sun-soaked swim and laid-back essentials capture those perfect moments between waves and wandering in our new collection, designed to carry you effortlessly from the beach to wherever the day takes you.",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 80,
+        "padding-block-end": 80
       }
     }
   },
   "order": [
     "section",
-    "main"
+    "tabs",
+    "main",
+    "seo-text"
   ]
 }
