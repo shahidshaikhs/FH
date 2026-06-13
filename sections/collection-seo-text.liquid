@@ -1,0 +1,181 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--page-width color-{{ section.settings.color_scheme }}"
+>
+  <div
+    class="collection-seo-text spacing-style"
+    style="{% render 'spacing-style', settings: section.settings %}"
+  >
+    {% if section.settings.heading_text != blank %}
+      <p class="collection-seo-text__eyebrow">{{ section.settings.heading_text | escape }}</p>
+    {% endif %}
+    {% if section.settings.description != blank %}
+      <div class="collection-seo-text__body" id="seo-text-body-{{ section.id }}">
+        <div class="collection-seo-text__description" id="seo-text-description-{{ section.id }}">
+          {{ section.settings.description | escape | newline_to_br }}
+        </div>
+        <button
+          class="collection-seo-text__toggle"
+          id="seo-text-toggle-{{ section.id }}"
+          type="button"
+          aria-expanded="false"
+        >
+          View more
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    const toggleBtn = document.getElementById('seo-text-toggle-{{ section.id }}');
+    const description = document.getElementById('seo-text-description-{{ section.id }}');
+    if (!toggleBtn || !description) return;
+
+    toggleBtn.addEventListener('click', function() {
+      const isExpanded = description.classList.toggle('collection-seo-text__description--expanded');
+      toggleBtn.setAttribute('aria-expanded', isExpanded);
+      toggleBtn.textContent = isExpanded ? 'View less' : 'View more';
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .collection-seo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .collection-seo-text__eyebrow {
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .collection-seo-text__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .collection-seo-text__description {
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--color-foreground);
+    text-align: center;
+    margin: 0;
+  }
+
+  .collection-seo-text__toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-foreground);
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .collection-seo-text__description {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .collection-seo-text__description--expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+
+    .collection-seo-text__toggle {
+      display: inline-block;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection SEO text",
+  "tag": "section",
+  "class": "collection-seo-text-wrapper section-wrapper",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "Men's Clothing"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Sun-soaked swim and laid-back essentials capture those perfect moments between waves and wandering in our new collection, designed to carry you effortlessly from the beach to wherever the day takes you."
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection SEO text"
+    }
+  ]
+}
+{% endschema %}

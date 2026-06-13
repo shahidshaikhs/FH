@@ -1,0 +1,591 @@
+<script
+  src="{{ 'results-list.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% javascript %}
+  const url = new URL(window.location.href);
+  if (url.hash) {
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        const card = document.getElementById(url.hash.slice(1));
+        if (card) {
+          card.scrollIntoView({ behavior: 'instant' });
+        }
+      },
+      { once: true }
+    );
+  }
+{% endjavascript %}
+
+{% comment %} We always render this full-width, as the child blocks have width: page/full settings {% endcomment %}
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<results-list
+  class="section product-grid-container color-{{ section.settings.color_scheme }}"
+  style="--padding-block-start: {{ section.settings.padding-block-start }}px; --padding-block-end: {{ section.settings.padding-block-end }}px;"
+  section-id="{{ section.id }}"
+  infinite-scroll="{{ section.settings.enable_infinite_scroll }}"
+>
+  {% render 'skip-to-content-link', href: '#ResultsList', text: 'accessibility.skip_to_results_list' %}
+
+  <div
+    class="collection-wrapper grid gap-style{% if section.settings.product_grid_width == 'full-width' %} collection-wrapper--grid-full-width{% endif %}"
+  >
+    {% content_for 'block',
+      type: 'filters',
+      id: 'filters',
+      results: collection,
+      results_size: collection.products_count
+    %}
+
+    {% assign products_per_page = 24 %}
+
+    {% if section.settings.enable_infinite_scroll == false %}
+      {% assign products_per_page = section.settings.products_per_page %}
+    {% endif %}
+
+    {% paginate collection.products by products_per_page %}
+      {% capture children %}
+        {% comment %} Read banner positions directly from section settings (reliable in content_for 'block' architecture) {% endcomment %}
+        {% assign in_grid_banner_position = section.settings.in_grid_banner_position | plus: 0 %}
+        {% assign midpage_banner_position = section.settings.midpage_banner_position | plus: 0 %}
+
+        {% assign banner_injected = false %}
+        {% assign midpage_injected = false %}
+        {% assign product_counter = 0 %}
+        {% for product in collection.products %}
+          {% assign product_counter = product_counter | plus: 1 %}
+
+          {% comment %} In-grid banner injection {% endcomment %}
+          {% if in_grid_banner_position > 0 and banner_injected == false and product_counter == in_grid_banner_position %}
+            <li class="product-grid__item product-grid__item--banner">
+              {% content_for 'block', type: '_collection-in-grid-banner', id: 'in-grid-banner' %}
+            </li>
+            {% assign banner_injected = true %}
+          {% endif %}
+
+          <li
+            id="{{ section.id }}-{{ product.id }}"
+            class="product-grid__item product-grid__item--{{ forloop.index0 }}"
+            data-page="{{ paginate.current_page }}"
+            data-product-id="{{ product.id }}"
+            ref="cards[]"
+          >
+            {% # theme-check-disable %}
+            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+            {% # theme-check-enable %}
+          </li>
+
+          {% comment %} Mid-page banner injection {% endcomment %}
+          {% if midpage_banner_position > 0 and midpage_injected == false and product_counter == midpage_banner_position %}
+            <li class="product-grid__item product-grid__item--midpage-banner">
+              {% content_for 'block', type: '_collection-midpage-banner', id: 'midpage-banner' %}
+            </li>
+            {% assign midpage_injected = true %}
+          {% endif %}
+        {% endfor %}
+      {% endcapture %}
+
+      {% render 'product-grid',
+        section: section,
+        children: children,
+        products: collection.products,
+        paginate: paginate,
+        enable_infinite_scroll: section.settings.enable_infinite_scroll
+      %}
+
+      {% if section.settings.show_load_more and section.settings.enable_infinite_scroll == false and paginate.next %}
+        <div class="collection-load-more">
+          <a href="{{ paginate.next.url }}" class="collection-load-more__button">Load more</a>
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</results-list>
+
+{% style %}
+  /* Cap product grid at 4 columns on desktop */
+  @media screen and (min-width: 750px) {
+    .product-grid--{{ section.id }}:is(.product-grid--grid) {
+      --product-grid-columns-desktop: repeat(4, 1fr);
+    }
+  }
+
+  /* In-grid banner: column span + fill grid cell height */
+  .product-grid--{{ section.id }} .product-grid__item--banner {
+    list-style: none;
+    grid-column: span {{ section.settings.in_grid_banner_columns }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} .product-grid__item--banner {
+      grid-column: span 1;
+    }
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-base, 0);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__heading {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight, 400);
+    font-size: 24px;
+    line-height: 32px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__description {
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-in-grid-banner__link {
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    text-decoration: underline;
+  }
+
+  /* Mid-page banner: configurable column span */
+  .product-grid--{{ section.id }} .product-grid__item--midpage-banner {
+    list-style: none;
+    grid-column: span {{ section.settings.midpage_banner_columns }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} .product-grid__item--midpage-banner {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius-base, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    aspect-ratio: 1408 / 469;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 64px;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__heading {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight, 400);
+    font-size: 72px;
+    line-height: 80px;
+    letter-spacing: -2.16px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__description {
+    font-family: var(--font-body--family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .product-grid--{{ section.id }} .collection-midpage-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid #C8D5E4;
+    padding: 4px 32px;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+    width: fit-content;
+    min-height: 48px;
+  }
+
+  /* Load more button */
+  .collection-load-more {
+    grid-column: var(--full-width);
+    display: flex;
+    justify-content: center;
+    padding-block-start: 16px;
+  }
+
+  .collection-load-more__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-foreground);
+    padding: 4px 32px;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+    min-height: 48px;
+    cursor: pointer;
+  }
+
+  .collection-load-more__button:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  /* Hide default pagination when load-more is active */
+  {% if section.settings.show_load_more %}
+    .product-grid-container .pagination {
+      display: none;
+    }
+  {% endif %}
+
+  /* Mobile grid gap override */
+  @media screen and (max-width: 749px) {
+    .product-grid--{{ section.id }} {
+      --product-grid-gap-mobile: 24px 8px;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner {
+      aspect-ratio: 1 / 1;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__overlay {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__content {
+      padding: 24px;
+    }
+
+    .product-grid--{{ section.id }} .collection-midpage-banner__heading {
+      font-size: 40px;
+      line-height: 48px;
+      letter-spacing: 0;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__heading {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__description {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .product-grid--{{ section.id }} .collection-in-grid-banner__content {
+      padding: 16px;
+      gap: 4px;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "t:names.collection_container",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "organic",
+          "label": "t:options.editorial"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "product_card_size",
+      "label": "t:settings.card_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        },
+        {
+          "value": "extra-large",
+          "label": "t:options.extra_large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_product_card_size",
+      "label": "t:settings.mobile_card_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_infinite_scroll",
+      "label": "t:settings.auto_load_products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:settings.products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 24,
+      "visible_if": "{{ section.settings.enable_infinite_scroll == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "product_grid_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "centered",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "centered"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width_on_mobile",
+      "label": "t:settings.full_width_on_mobile",
+      "default": true,
+      "visible_if": "{{ section.settings.product_grid_width != 'full-width' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_horizontal",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_vertical",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_load_more",
+      "label": "Show load more button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Banners"
+    },
+    {
+      "type": "paragraph",
+      "content": "Set the grid position (product count) where each banner appears. Use 0 to hide."
+    },
+    {
+      "type": "number",
+      "id": "in_grid_banner_position",
+      "label": "In-grid banner position",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "in_grid_banner_columns",
+      "label": "In-grid banner columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "number",
+      "id": "midpage_banner_position",
+      "label": "Midpage banner position",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "midpage_banner_columns",
+      "label": "Midpage banner columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": []
+}
+{% endschema %}

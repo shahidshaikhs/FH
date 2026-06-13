@@ -1,0 +1,59 @@
+{% doc %}
+  In-Grid Promotional Banner Block
+
+  Renders a promotional banner card within the collection product grid.
+  Uses tag: null so the parent section controls the wrapper element.
+
+  @example {% content_for 'block', type: '_collection-in-grid-banner', id: 'in-grid-banner' %}
+{% enddoc %}
+
+{% render 'collection-in-grid-banner',
+  image: block.settings.image,
+  heading: block.settings.heading,
+  description: block.settings.description,
+  link_text: block.settings.link_text,
+  link_url: block.settings.link_url,
+  shopify_attributes: block.shopify_attributes
+%}
+
+{% schema %}
+{
+  "name": "In-grid banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop BreezeKnit™"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Our sweat-wicking liner perfect for long days in the sun."
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "In-grid banner"
+    }
+  ]
+}
+{% endschema %}

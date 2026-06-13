@@ -1,0 +1,59 @@
+{% doc %}
+  Midpage Lookbook Banner Block
+
+  Renders a full-width lookbook/hero banner within the collection product grid.
+  Uses tag: null so the parent section controls the wrapper element.
+
+  @example {% content_for 'block', type: '_collection-midpage-banner', id: 'midpage-banner' %}
+{% enddoc %}
+
+{% render 'collection-midpage-banner',
+  image: block.settings.image,
+  heading: block.settings.heading,
+  description: block.settings.description,
+  button_text: block.settings.button_text,
+  button_url: block.settings.button_url,
+  shopify_attributes: block.shopify_attributes
+%}
+
+{% schema %}
+{
+  "name": "Midpage banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Effortless style ideas"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover our curated lookbook and find fresh ways to mix and match your favorite pieces."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View Lookbook"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Midpage banner"
+    }
+  ]
+}
+{% endschema %}
